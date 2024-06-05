@@ -118,11 +118,11 @@ decomp %>%
 data_F1 = decomp %>% 
   mutate(Total = level.actual - level.pre_tcja) %>% 
   select(
-    `Fiscal year`                       = fy, 
+    `Fiscal year`                               = fy, 
     Total, 
-    `1) TCJA cuts`                      = effect.tcja, 
-    `2) Mortality risk`                 = effect.excess_deaths, 
-    `3) Asset prices and other changes` = `effect.other`, 
+    `1) TCJA cuts`                              = effect.tcja, 
+    `2) Mortality risk`                         = effect.excess_deaths, 
+    `3) Growth in top wealth and other effects` = `effect.other`, 
   ) %>% 
   write_csv('./chart_data/figure_1.csv')
 
