@@ -1,0 +1,150 @@
+
+library(tidyverse)
+library(Hmisc)
+library(magrittr)
+library(gt)
+
+# Read data 
+scf = c(2019, 2022) %>% 
+  map(.f = ~ paste0(
+      'C:/Users/jar335/Downloads/scfp', 
+      .x, 
+      'excel/SCFP', 
+      .x, 
+      '.csv') %>% 
+        read_csv() %>% 
+        mutate(year = .x)
+    ) %>% 
+  bind_rows() %>% 
+  select(year, AGE, MARRIED, KIDS, WGT, FIN, NFIN, BUS, DEBT, HOUSES, RETQLIQ,
+         NMMF, STOCKS, NETWORTH, INCOME, LIQ, VEHIC, starts_with('KG'))
+
+# Undo idiotic inflation adjustment for 2019 values
+scf %<>% 
+  mutate(across(.cols = -c(year, WGT, AGE, MARRIED, KIDS), 
+                .fns  = ~ if_else(year == 2019, . / 1.1592, .)))
+
+# Get income and wealth groups
+pcts = c(0, 0.2, 0.4, 0.6, 0.8, 0.9, 0.99)
+income_groups_2019 = wtd.quantile(x       = scf %>% filter(year == 2019) %>% select(INCOME) %>% deframe(), 
+                                  weights = scf %>% filter(year == 2019) %>% select(WGT) %>% deframe(), 
+                                  probs   = pcts)
+income_groups_2022 = wtd.quantile(x       = scf %>% filter(year == 2022) %>% select(INCOME) %>% deframe(), 
+                                  weights = scf %>% filter(year == 2022) %>% select(WGT) %>% deframe(), 
+                                  probs   = pcts)
+# Assign groups
+scf %<>%
+  mutate(income_group_2019 = cut(INCOME, c(income_groups_2019, Inf), labels = pcts, right = F), 
+         income_group_2022 = cut(INCOME, c(income_groups_2022, Inf), labels = pcts, right = F),
+         income_group = if_else(year == 2019, income_group_2019, income_group_2022), 
+         age_group = case_when(
+           AGE < 35 ~ '18-34', 
+           AGE < 45 ~ '35-44',
+           AGE < 55 ~ '45-54',
+           AGE < 65 ~ '55-64',
+           AGE < 1e9 ~ '65+'
+         )) 
+
+# Get source-income-age totals
+by_source_income_age = scf %>% 
+  group_by(year, income_group, age_group) %>% 
+  mutate(
+    retirement_accounts   = RETQLIQ,
+    taxable_funds         = NMMF,
+    taxable_single_stocks = STOCKS,
+    cash                  = LIQ,
+    other_financial       = FIN - RETQLIQ - NMMF - STOCKS - LIQ,
+    housing               = HOUSES, 
+    private_business      = BUS,
+    cars                  = VEHIC,
+    other_nonfiancial     = NFIN - HOUSES - BUS - VEHIC, 
+    debt                  = -DEBT
+  ) %>% 
+  summarise(across(.cols = c(retirement_accounts, taxable_funds,
+                             taxable_single_stocks, cash, other_financial,
+                             housing, private_business, cars,
+                             other_nonfiancial, debt), 
+                   .fns   = list(total = ~sum(. * WGT) / 1e9, 
+                                 count = ~sum((. != 0) * WGT) / 1e6), 
+                   .names = '{fn}.{col}'), 
+            total.n = sum(WGT) / 1e6, count.n = sum(WGT) / 1e6,
+            .groups = 'drop') %>% 
+  pivot_longer(cols      = -c(year, income_group, age_group),
+               names_sep = '[.]',
+               names_to  = c('series', 'source'))  
+
+
+# Make table
+by_source_income_age %>% 
+  filter(series == 'total') %>% 
+  group_by(year, income_group, source) %>% 
+  summarise(value = sum(value)) %>% 
+  pivot_wider(names_from  = year, 
+              values_from = value) %>% 
+  group_by(income_group) %>%
+  mutate(change       = `2022` - `2019`, 
+         contribution = round(change / sum(change), 2)) %>% 
+  select(source, income_group, contribution) %>% 
+  pivot_wider(names_from  = income_group, 
+              values_from = contribution) %>% 
+  gt() %>% 
+  data_color(
+    columns = -source,
+    palette = c("#bf3b2a", "white", "#63c460"),
+    domain = c(-1, 1)
+  ) %>% 
+  tab_header(
+    title    = "Percent contribution to change in income group's net worth", 
+    subtitle = "2019-2022" 
+  )
+
+
+by_source_income_age %>% 
+  filter(series == 'count') %>% 
+  group_by(year, income_group, source) %>%
+  summarise(count = sum(value), 
+            .groups = 'drop') %>% 
+  pivot_wider(names_from = source, 
+              values_from = count) %>% 
+  mutate(across(.cols = -c(year, income_group, n), 
+                .fns  = ~ round(. / n, 2))) %>% 
+  select(-n) %>% 
+  pivot_longer(cols      = -c(year, income_group), 
+               names_to  = 'source', 
+               values_to = 'share') %>% 
+  filter(source == 'taxable_single_stocks') %>% 
+  ggplot(aes(x = income_group, y = share, colour = as.factor(year))) + 
+  geom_point() + 
+  geom_line()
+
+%>% 
+  pivot_wider(names_from  = year, 
+              values_from = share) %>% 
+  mutate(change = `2022` - `2019`) %>% 
+  select(income_group, source, change) %>% 
+  pivot_wider(names_from  = income_group, 
+              values_from = change) %>% 
+  gt() %>% 
+  data_color(
+    columns = -source,
+    palette = c("#bf3b2a", "white", "#63c460"),
+    domain = c(-0.65, 0.65)
+  ) %>% 
+  tab_header(
+    title    = "Percent contribution to change in income group's net worth", 
+    subtitle = "2019-2022" 
+  )
+  
+
+
+
+# KG analysis
+scf %>% 
+  group_by(year, income_group) %>% 
+  summarise(across(.cols = c(starts_with('KG'), -KGINC), 
+                   .fns  = ~ sum(. * WGT) / 1e9)) %>% 
+  pivot_longer(cols = -c(year, income_group)) %>% 
+  pivot_wider(names_from = year) %>% 
+  mutate(change = `2022` - `2019`) %>% 
+  group_by(income_group) %>% 
+  mutate(share = change / change[name == 'KGTOTAL'])
