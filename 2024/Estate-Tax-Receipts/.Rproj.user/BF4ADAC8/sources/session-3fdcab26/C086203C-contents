@@ -197,7 +197,8 @@ data_F3 = estate_fy %>%
     by = 'fy'
   ) %>%
   mutate(`Pre-TCJA projection` = if_else(fy == 2017, Actual, `Pre-TCJA projection`)) %>% 
-  rename(`Fiscal year` = fy)
+  rename(`Fiscal year` = fy) %>% 
+  write_csv('./chart_data/figure_3.csv')
 
 # Create static chart
 data_F3 %>% 
