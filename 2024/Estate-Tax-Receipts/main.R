@@ -137,13 +137,14 @@ data_F1 %>%
     data = data_F1 %>% 
       select(`Fiscal year`, Total), 
     mapping = aes(x = `Fiscal year`, y = Total, shape = 'Difference between pre-TCJA projection and actual'), 
-    size = 4
+    size = 5
   ) + 
   geom_hline(yintercept = 0) + 
   theme_bw() +
-  labs(y = 'Estate and gift tax receipts (billions of dollars)', fill = 'Factor', shape = element_blank()) +
+  theme(legend.position = 'top', legend.box = 'vertical') +
+  labs(y = 'Estate and gift tax receipts (billions of dollars)', fill = '', shape = element_blank()) +
   scale_x_continuous(breaks = 2018:2023) + 
-  ggtitle('Contribution to Difference between Pre-TCJA Projection and Actual Receipts')
+  ggtitle('Contribution to Difference between Pre-TCJA Projection and Actual Receipts') 
 
 
 #----------
