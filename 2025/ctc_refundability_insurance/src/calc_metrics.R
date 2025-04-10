@@ -1,7 +1,8 @@
 #------------------------------------------------------------------------------
 # calc_metrics.R 
 # 
-# TODO
+# Calculates summary stats about parents moving in and out of CTC phase-in 
+# range across consecutive years
 #------------------------------------------------------------------------------
 
 
