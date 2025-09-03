@@ -6,16 +6,7 @@
 
 library(tidyverse)
 
-#----------------
-# Set parameters
-#----------------
-
-pce_shock = 0.0183           # +1.83% level effect in PCE
-pce_to_cpiu_factor = 1.00     # calibrate CPI-U vs PCE (set >1 if CPI-U responds more than PCE)
-
-# implied tariff shock for thresholds
-cpiu_shock  = pce_shock * pce_to_cpiu_factor
-
+# TODO trade shock business...
 
 #-----------
 # Read data
@@ -29,6 +20,89 @@ macro_projections = bind_rows(
   read_csv("resources/macro_projections/historical.csv"),
   read_csv("resources/macro_projections/projections.csv")
 )
+
+# read tariff shock parameter files
+crosswalk     = read_csv("resources/tariff_inputs/crosswalk.csv")
+fcsuti_shares = read_csv("resources/tariff_inputs/fcsuti_shares.csv")
+
+
+#-----------------------------
+# Calculate CPI-U price shock
+#-----------------------------
+
+# pull out trade impact 
+trade_effect = crosswalk %>% 
+  filter(gtap_category == 'Trade') %>% 
+  mutate(allocation = gtap_weight * tariff_price_shock) %>% 
+  select(allocation) %>% 
+  deframe()
+
+
+cpiu_shock = crosswalk %>%
+  mutate(
+    trade_allocation_weight = gtap_weight / sum(gtap_weight * trade_allocation, na.rm = T),   
+    trade_price_shock       = trade_effect * trade_allocation_weight, 
+    total_price_shock       = tariff_price_shock + trade_price_shock
+  ) %>% 
+  group_by(cpi_category) %>% 
+  summarise(
+    weight             = mean(cpi_weight) / 100,
+    tariff_price_shock = weighted.mean(tariff_price_shock, gtap_weight),
+    total_price_shock  = weighted.mean(total_price_shock, gtap_weight)
+  ) %>% 
+  filter(!is.na(cpi_category)) %>% 
+  summarise(
+    weighted.mean(total_price_shock, weight)
+  ) %>% 
+  deframe()
+
+
+
+#------------------------------
+# Calculate FCSUti price shock
+#------------------------------
+
+fcsuti_shares = fcsuti_shares %>% 
+  
+  # collapse ti into one category
+  mutate(
+    category = if_else(category %in% c('Telephone', 'Internet'), 'ti', category)
+  ) %>% 
+  group_by(tenure, category) %>% 
+  summarise(
+    value     = sum(value), 
+    share     = mean(share), 
+    threshold = mean(threshold), 
+    .groups = 'drop'
+  ) %>% 
+  
+  # calculate overall FCSUti weights
+  group_by(spm_category = category) %>% 
+  summarise(
+    weight = weighted.mean(value, share * threshold)
+  ) %>% 
+  mutate(
+    weight = weight / sum(weight)
+  )
+
+fcsuti_shock = crosswalk %>% 
+  filter(!is.na(spm_category)) %>%
+  
+  # Calcualte average tariff price shock by SPM category
+  group_by(spm_category) %>% 
+  summarise(
+    tariff_price_shock = weighted.mean(tariff_price_shock, gtap_weight)
+  ) %>% 
+  
+  # Calculate implied change in FCSUti 
+  left_join(
+    fcsuti_shares, by = 'spm_category'
+  ) %>% 
+  summarise(
+    tariff_price_shock = weighted.mean(tariff_price_shock, weight)
+  )  %>% 
+  deframe()
+
 
 
 #----------
@@ -107,17 +181,16 @@ baseline_cpiu_factor =  macro_projections %>%
   select(cpiu) %>% 
   deframe()
 
-#----------------
-# Do calculation
-#----------------
 
-poverty_microdata = cps %>%
+#--------------------
+# Do OPM calculation
+#--------------------
+
+opm_microdata = cps %>%
   mutate(
-    
-    oasdi        = replace_na(na_if(INCSS,   999999),  0),
-    ssi          = replace_na(na_if(INCSSI,  999999),  0),
-    vet          = replace_na(na_if(INCVET, 9999999),  0),
-
+    oasdi = replace_na(na_if(INCSS,   999999),  0),
+    ssi   = replace_na(na_if(INCSSI,  999999),  0),
+    vet   = replace_na(na_if(INCVET, 9999999),  0)
   ) %>%
   
   # Assign census-concept family IDs
@@ -170,7 +243,7 @@ poverty_microdata = cps %>%
   
 
 # get totals
-poverty_estimates = poverty_microdata %>% 
+opm_estimates = opm_microdata %>% 
   group_by(scenario) %>% 
   summarise(
     n_baseline    = sum(baseline * weight * weight_index),
@@ -181,7 +254,7 @@ poverty_estimates = poverty_microdata %>%
     pct_change    = n_reform / n_baseline -1
   )
 
-child_poverty_estimates = poverty_microdata %>% 
+opm_child_estimates = opm_microdata %>% 
   filter(age < 18) %>% 
   group_by(scenario) %>% 
   summarise(
