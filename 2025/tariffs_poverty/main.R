@@ -254,14 +254,84 @@ opm_estimates = opm_microdata %>%
     pct_change    = n_reform / n_baseline -1
   )
 
-opm_child_estimates = opm_microdata %>% 
-  filter(age < 18) %>% 
-  group_by(scenario) %>% 
+opm_child_estimates = opm_microdata %>%
+  filter(age < 18) %>%
+  group_by(scenario) %>%
   summarise(
     n_baseline    = sum(baseline * weight * weight_index),
     n_reform      = sum(reform * weight * weight_index),
-    rate_baseline = n_baseline / sum(weight * weight_index), 
-    rate_reform   = n_reform   / sum(weight * weight_index), 
-    change        = n_reform - n_baseline, 
+    rate_baseline = n_baseline / sum(weight * weight_index),
+    rate_reform   = n_reform   / sum(weight * weight_index),
+    change        = n_reform - n_baseline,
+    pct_change    = n_reform / n_baseline -1
+  )
+
+
+#--------------------
+# Do SPM calculation
+#--------------------
+
+spm_microdata = cps %>%
+  mutate(
+    oasdi = replace_na(na_if(INCSS,   999999),  0),
+    ssi   = replace_na(na_if(INCSSI,  999999),  0),
+    vet   = replace_na(na_if(INCVET, 9999999),  0)
+  ) %>%
+  group_by(SPMFAMUNIT) %>%
+  mutate(
+    spm_oasdi          = sum(oasdi),
+    spm_ssi            = sum(ssi),
+    spm_vet            = sum(vet),
+    spm_indexed        = spm_oasdi + spm_ssi + spm_vet,
+    spm_other_resources = SPMTOTRES - spm_indexed,
+
+    # age forward
+    spm_other_resources_2026 = spm_other_resources * economic_factor,
+    spm_vet_2026             = spm_vet            * economic_factor,
+    spm_ssi_2026             = spm_ssi            * economic_factor,
+    spm_oasdi_2026           = spm_oasdi          * oasdi_factor,
+
+    spm_indexed_2026 = spm_oasdi_2026 + spm_ssi_2026 + spm_vet_2026,
+    spm_resources_2026 = spm_other_resources_2026 + spm_indexed_2026,
+
+    poverty_line = SPMTHRESH * baseline_cpiu_factor
+  ) %>%
+  ungroup() %>%
+
+  # do poverty status calculations for each scenario
+  mutate(
+    baseline = spm_resources_2026                                   < poverty_line,
+    gross    = spm_resources_2026                                   < poverty_line * (1 + fcsuti_shock),
+    net      = (spm_resources_2026 + (spm_indexed_2026 * cpiu_shock)) < poverty_line * (1 + fcsuti_shock)
+  ) %>%
+  select(weight = SPMWT, weight_index, age, baseline, gross, net) %>%
+  pivot_longer(
+    cols      = c(gross, net),
+    names_to  = 'scenario',
+    values_to = 'reform'
+  )
+
+
+# get totals
+spm_estimates = spm_microdata %>%
+  group_by(scenario) %>%
+  summarise(
+    n_baseline    = sum(baseline * weight * weight_index),
+    n_reform      = sum(reform * weight * weight_index),
+    rate_baseline = n_baseline / sum(weight * weight_index),
+    rate_reform   = n_reform   / sum(weight * weight_index),
+    change        = n_reform - n_baseline,
+    pct_change    = n_reform / n_baseline -1
+  )
+
+spm_child_estimates = spm_microdata %>%
+  filter(age < 18) %>%
+  group_by(scenario) %>%
+  summarise(
+    n_baseline    = sum(baseline * weight * weight_index),
+    n_reform      = sum(reform * weight * weight_index),
+    rate_baseline = n_baseline / sum(weight * weight_index),
+    rate_reform   = n_reform   / sum(weight * weight_index),
+    change        = n_reform - n_baseline,
     pct_change    = n_reform / n_baseline -1
   )
