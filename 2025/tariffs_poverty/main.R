@@ -8,10 +8,6 @@ library(tidyverse)
 library(Hmisc)
 library(quantregForest)
 
-# TODO trade shock business...
-# TODO ask codex to reorganize modularly
-# TODO claude review
-
 # Switch for loading precalculated tax offset (non-TBL users must set to TRUE)
 load_precalculated_tax_offset <- TRUE
 
