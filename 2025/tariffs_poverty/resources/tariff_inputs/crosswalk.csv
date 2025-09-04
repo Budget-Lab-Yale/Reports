@@ -1,66 +1,66 @@
 gtap_category,cpi_category,spm_category,trade_allocation,cpi_weight,gtap_weight,tariff_price_shock
-Paddy rice,Other food at home,Food,1,0.02338,2.56E-06,0.0184
-Wheat,Cereals and bakery products,Food,1,0.0111,0.000155588,0.0095
-Cereal grains nec,Cereals and bakery products,Food,1,0.0111,0.00015919,0.0167
-"Vegetables, fruit, nuts",Fruits and vegetables,Food,1,0.01336,0.003775663,0.0382
-Oil seeds,Other food at home,Food,1,0.02338,1.73E-05,0.0002
-"Sugar cane, sugar beet",Other food at home,Food,1,0.02338,2.92E-05,-0.002
-Plant-based fibers,Apparel and services,Clothing,1,0.0248,0.00053881,0.0101
-Crops nec,Other food at home,Food,1,0.02338,0.000511592,0.1665
-"Bovine cattle, sheep and goats","Meats, poultry, fish, and eggs",Food,1,0.01621,0.000263702,0.0085
-Animal products nec,"Meats, poultry, fish, and eggs",Food,1,0.01621,0.000857988,0.0151
-Raw milk,Dairy products,Food,1,0.00741,0.000193627,0.0139
-"Wool, silk-worm cocoons",Apparel and services,Clothing,1,0.0248,3.75E-05,0.1254
-Forestry,Household furnishings & operations,NA,1,0.04406,4.45E-05,0.0135
-Fishing,"Meats, poultry, fish, and eggs",Food,1,0.01621,0.000333423,0.0694
-Coal,"Utilities, fuels & public services (agg)",NA,1,0.04311,1.22E-06,0.0033
-Oil,Transportation (agg),NA,1,0.16571,7.81E-09,0.0021
-Gas,"Utilities, fuels & public services (agg)",NA,1,0.04311,4.60E-06,0.0016
-Minerals nec,Household furnishings & operations,NA,1,0.04406,1.96E-05,0.0057
-Bovine meat products,"Meats, poultry, fish, and eggs",Food,1,0.01621,0.005482903,0.0161
-Meat products nec,"Meats, poultry, fish, and eggs",Food,1,0.01621,0.004378222,0.0122
-Vegetable oils and fats,Other food at home,Food,1,0.02338,0.000735689,0.0261
-Dairy products,Dairy products,Food,1,0.00741,0.005225505,0.0187
-Processed rice,Cereals and bakery products,Food,1,0.0111,0.000110744,0.1232
-Sugar,Other food at home,Food,1,0.02338,0.001786777,0.0246
-Food products nec,Other food at home,Food,1,0.02338,0.020928861,0.0346
-Beverages and tobacco products,Beverages & tobacco (agg),NA,1,0.02214,0.014174974,0.0411
-Textiles,Apparel and services,Clothing,1,0.0248,0.002013493,0.1161
-Wearing apparel,Apparel and services,Clothing,1,0.0248,0.008698267,0.1982
-Leather products,Apparel and services,Clothing,1,0.0248,0.003481749,0.213
-Wood products,Household furnishings & operations,NA,1,0.04406,0.000378298,0.0475
-"Paper products, publishing",Household furnishings & operations,NA,1,0.04406,0.00249689,0.0425
-"Petroleum, coal products",Transportation (agg),NA,1,0.16571,0.010306476,0.003
-Chemical products,Household furnishings & operations,NA,1,0.04406,0.005528162,0.0425
-Basic pharmaceutical products,Medicinal drugs,NA,1,0.01347,0.013381527,0.0135
-Rubber and plastic products,Transportation (agg),NA,1,0.16571,0.003125833,0.0688
-Mineral products nec,Household furnishings & operations,NA,1,0.04406,0.000857742,0.08
-Ferrous metals,Transportation (agg),NA,1,0.16571,5.15E-05,0.1137
-Metals nec,Household furnishings & operations,NA,1,0.04406,8.49E-06,0.1909
-Metal products,Household furnishings & operations,NA,1,0.04406,0.001359796,0.0757
-"Computer, electronic and optic",Recreation,NA,1,0.05292,0.007153011,0.085
-Electrical equipment,Household furnishings & operations,NA,1,0.04406,0.004657648,0.1384
-Machinery and equipment nec,Medical equipment and supplies,NA,1,0.0018,0.000769405,0.0934
-Motor vehicles and parts,Transportation (agg),NA,1,0.16571,0.017836159,0.1035
-Transport equipment nec,Transportation (agg),NA,1,0.16571,0.001630534,0.071
-Manufactures nec,Household furnishings & operations,NA,1,0.04406,0.026264824,0.0636
-Electricity,"Utilities, fuels & public services (agg)",Utilities,1,0.04311,0.011121638,0.006
-"Gas manufacture, distribution","Utilities, fuels & public services (agg)",Utilities,1,0.04311,0.001183268,0.0064
-Water,"Utilities, fuels & public services (agg)",Utilities,1,0.04311,0.005369595,0.0134
-Construction,Shelter,NA,1,0.35483,0.000157312,0.0167
-Trade,NA,NA,NA,0,0.145618497,0.0083
-"Accommodation, Food and servic",Food away from home,Food,1,0.05648,0.068599845,0.0087
-Transport nec,Transportation (agg),NA,0,0.16571,0.01446401,0.0082
-Water transport,Transportation (agg),NA,0,0.16571,0.00169631,0.0082
-Air transport,Transportation (agg),NA,0,0.16571,0.011095888,0.0037
-Warehousing and support activi,Transportation (agg),NA,0,0.16571,0.000370173,0.0117
-Communication,Communication,ti,0,0.03149,0.040227243,0.009
-Financial services nec,Other goods & services (ex tobacco),NA,0,0.02443,0.036348488,0.0058
-Insurance,Health insurance,NA,0,0.00793,0.037483692,0.0054
-Real estate activities,Shelter,NA,0,0.35483,0.040127651,0.0069
-Business services nec,Other goods & services (ex tobacco),NA,0,0.02443,0.02396342,0.0083
-Recreational and other service,Recreation,NA,0,0.05292,0.053867294,0.0085
-Public Administration and defe,NA,NA,0,0,0.005332661,0.0093
-Education,Education,NA,0,0.02583,0.028786305,0.0067
-Human health and social work a,Medical care services (ex HI),NA,0,0.05954,0.185570795,0.0097
-Dwellings,Shelter,Shelter,0,0.35483,0.118846374,0.0054
+Paddy rice,Other food at home,Food,1,0.02338,2.56E-06,0.019353606
+Wheat,Cereals and bakery products,Food,1,0.0111,0.000155588,0.013724868
+Cereal grains nec,Cereals and bakery products,Food,1,0.0111,0.00015919,0.019353606
+"Vegetables, fruit, nuts",Fruits and vegetables,Food,1,0.01336,0.003775663,0.032770051
+Oil seeds,Other food at home,Food,1,0.02338,1.73E-05,0.007941918
+"Sugar cane, sugar beet",Other food at home,Food,1,0.02338,2.92E-05,0.007479282
+Plant-based fibers,Apparel and services,Clothing,1,0.0248,0.00053881,0.012414066
+Crops nec,Other food at home,Food,1,0.02338,0.000511592,0.130463354
+"Bovine cattle, sheep and goats","Meats, poultry, fish, and eggs",Food,1,0.01621,0.000263702,0.01233696
+Animal products nec,"Meats, poultry, fish, and eggs",Food,1,0.01621,0.000857988,0.016423578
+Raw milk,Dairy products,Food,1,0.00741,0.000193627,0.015575412
+"Wool, silk-worm cocoons",Apparel and services,Clothing,1,0.0248,3.75E-05,0.095765653
+Forestry,Household furnishings & operations,NA,1,0.04406,4.45E-05,0.01310802
+Fishing,"Meats, poultry, fish, and eggs",Food,1,0.01621,0.000333423,0.038013259
+Coal,"Utilities, fuels & public services (agg)",NA,1,0.04311,1.22E-06,0.005166102
+Oil,Transportation (agg),NA,1,0.16571,7.81E-09,0.004857678
+Gas,"Utilities, fuels & public services (agg)",NA,1,0.04311,4.60E-06,0.003238452
+Minerals nec,Household furnishings & operations,NA,1,0.04406,1.96E-05,0.005937162
+Bovine meat products,"Meats, poultry, fish, and eggs",Food,1,0.01621,0.005482903,0.016732002
+Meat products nec,"Meats, poultry, fish, and eggs",Food,1,0.01621,0.004378222,0.014418822
+Vegetable oils and fats,Other food at home,Food,1,0.02338,0.000735689,0.026293146
+Dairy products,Dairy products,Food,1,0.00741,0.005225505,0.018351228
+Processed rice,Cereals and bakery products,Food,1,0.0111,0.000110744,0.094609063
+Sugar,Other food at home,Food,1,0.02338,0.001786777,0.022052316
+Food products nec,Other food at home,Food,1,0.02338,0.020928861,0.029762916
+Beverages and tobacco products,Beverages & tobacco (agg),NA,1,0.02214,0.014174974,0.031382142
+Textiles,Apparel and services,Clothing,1,0.0248,0.002013493,0.097461985
+Wearing apparel,Apparel and services,Clothing,1,0.0248,0.008698267,0.152746988
+Leather products,Apparel and services,Clothing,1,0.0248,0.003481749,0.15791309
+Wood products,Household furnishings & operations,NA,1,0.04406,0.000378298,0.032770051
+"Paper products, publishing",Household furnishings & operations,NA,1,0.04406,0.00249689,0.026755782
+"Petroleum, coal products",Transportation (agg),NA,1,0.16571,0.010306476,0.006014268
+Chemical products,Household furnishings & operations,NA,1,0.04406,0.005528162,0.031459248
+Basic pharmaceutical products,Medicinal drugs,NA,1,0.01347,0.013381527,0.008790084
+Rubber and plastic products,Transportation (agg),NA,1,0.16571,0.003125833,0.056981335
+Mineral products nec,Household furnishings & operations,NA,1,0.04406,0.000857742,0.057983713
+Ferrous metals,Transportation (agg),NA,1,0.16571,5.15E-05,0.090214021
+Metals nec,Household furnishings & operations,NA,1,0.04406,8.49E-06,0.146501402
+Metal products,Household furnishings & operations,NA,1,0.04406,0.001359796,0.066002737
+"Computer, electronic and optic",Recreation,NA,1,0.05292,0.007153011,0.070320673
+Electrical equipment,Household furnishings & operations,NA,1,0.04406,0.004657648,0.09777041
+Machinery and equipment nec,Medical equipment and supplies,NA,1,0.0018,0.000769405,0.067236433
+Motor vehicles and parts,Transportation (agg),NA,1,0.16571,0.017836159,0.083582905
+Transport equipment nec,Transportation (agg),NA,1,0.16571,0.001630534,0.061607695
+Manufactures nec,Household furnishings & operations,NA,1,0.04406,0.026264824,0.052663399
+Electricity,"Utilities, fuels & public services (agg)",Utilities,1,0.04311,0.011121638,0.009561144
+"Gas manufacture, distribution","Utilities, fuels & public services (agg)",Utilities,1,0.04311,0.001183268,0.009175614
+Water,"Utilities, fuels & public services (agg)",Utilities,1,0.04311,0.005369595,0.014341716
+Construction,Shelter,NA,1,0.35483,0.000157312,0.016732002
+Trade,NA,NA,NA,0,0.145618497,0.010563522
+"Accommodation, Food and servic",Food away from home,Food,1,0.05648,0.068599845,0.011026158
+Transport nec,Transportation (agg),NA,0,0.16571,0.01446401,0.010486416
+Water transport,Transportation (agg),NA,0,0.16571,0.00169631,0.010486416
+Air transport,Transportation (agg),NA,0,0.16571,0.011095888,0.007787706
+Warehousing and support activi,Transportation (agg),NA,0,0.16571,0.000370173,0.013262232
+Communication,Communication,ti,0,0.03149,0.040227243,0.011334582
+Financial services nec,Other goods & services (ex tobacco),NA,0,0.02443,0.036348488,0.008790084
+Insurance,Health insurance,NA,0,0.00793,0.037483692,0.00809613
+Real estate activities,Shelter,NA,0,0.35483,0.040127651,0.009561144
+Business services nec,Other goods & services (ex tobacco),NA,0,0.02443,0.02396342,0.010563522
+Recreational and other service,Recreation,NA,0,0.05292,0.053867294,0.010717734
+Public Administration and defe,NA,NA,0,0,0.005332661,0.011257476
+Education,Education,NA,0,0.02583,0.028786305,0.00963825
+Human health and social work a,Medical care services (ex HI),NA,0,0.05954,0.185570795,0.011411688
+Dwellings,Shelter,Shelter,0,0.35483,0.118846374,0.008558766
