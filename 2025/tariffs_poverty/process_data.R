@@ -9,19 +9,23 @@ process_data <- function() {
   #-----------
   # Read data
   #-----------
+  # load IPUMS extract
   cps <- read_csv("resources/ipums_asec.csv.gz")
 
+  # read macro projections file
   macro_projections <- bind_rows(
     read_csv("resources/macro_projections/historical.csv"),
     read_csv("resources/macro_projections/projections.csv")
   )
 
+  # read tariff shock parameter files
   crosswalk <- read_csv("resources/tariff_inputs/crosswalk.csv")
   fcsuti_shares <- read_csv("resources/tariff_inputs/fcsuti_shares.csv")
 
   #-----------------------------
   # Calculate CPI-U price shock
   #-----------------------------
+  # pull out trade impact
   trade_effect <- crosswalk %>%
     filter(gtap_category == 'Trade') %>%
     mutate(allocation = gtap_weight * tariff_price_shock) %>%
@@ -51,6 +55,7 @@ process_data <- function() {
   # Calculate FCSUti price shock
   #------------------------------
   fcsuti_shares <- fcsuti_shares %>%
+    # collapse ti into one category
     mutate(
       category = if_else(category %in% c('Telephone', 'Internet'), 'ti', category)
     ) %>%
@@ -61,6 +66,7 @@ process_data <- function() {
       threshold = mean(threshold),
       .groups = 'drop'
     ) %>%
+    # calculate overall FCSUti weights
     group_by(spm_category = category) %>%
     summarise(
       weight = weighted.mean(value, share * threshold)
@@ -71,10 +77,12 @@ process_data <- function() {
 
   fcsuti_shock <- crosswalk %>%
     filter(!is.na(spm_category)) %>%
+    # Calcualte average tariff price shock by SPM category
     group_by(spm_category) %>%
     summarise(
       tariff_price_shock = weighted.mean(tariff_price_shock, gtap_weight)
     ) %>%
+    # Calculate implied change in FCSUti
     left_join(
       fcsuti_shares, by = 'spm_category'
     ) %>%
@@ -86,6 +94,7 @@ process_data <- function() {
   #----------
   # Age data
   #----------
+  # calculate weight adjustment factors reflecting demographic change
   demographic_factors <- macro_projections %>%
     filter(year %in% c(2023, 2026)) %>%
     select(year, contains("married")) %>%
@@ -102,6 +111,7 @@ process_data <- function() {
     ungroup() %>%
     select(year, marital_status, age, value, index)
 
+  # calculate per-capita income growth
   economic_factor <- macro_projections %>%
     filter(year %in% c(2023, 2026)) %>%
     left_join(
@@ -118,10 +128,11 @@ process_data <- function() {
     select(gdp) %>%
     deframe()
 
+  # join demographic growth factors on CPS data
   cps <- cps %>%
     mutate(
       marital_status = if_else(MARST %in% 1:2, "married", "unmarried"),
-      age = if_else(AGE == 15 & marital_status == "married", 16, AGE)
+      age = if_else(AGE == 15 & marital_status == "married", 16, AGE) # No married 15 year olds in CBO data; assign them 16 year old growth rate
     ) %>%
     left_join(
       demographic_factors %>%
@@ -130,6 +141,7 @@ process_data <- function() {
       by = c("marital_status", "age")
     )
 
+  # calculate implied OASDI recipient growth
   oasdi_extensive_margin_factor <- cps %>%
     filter(INCSS > 0 & INCSS != 999999) %>%
     summarise(
@@ -137,6 +149,7 @@ process_data <- function() {
     ) %>%
     deframe()
 
+  # calculate intensive margin growth factor for OASDI
   oasdi_factor <- macro_projections %>%
     filter(year %in% c(2023, 2026)) %>%
     mutate(oasdi = outlays_mand_oasdi / lag(outlays_mand_oasdi, 1)) %>%
@@ -145,6 +158,7 @@ process_data <- function() {
     deframe() %>%
     `/`(oasdi_extensive_margin_factor)
 
+  # calculate baseline inflation factor
   baseline_cpiu_factor <-  macro_projections %>%
     filter(year %in% c(2023, 2026)) %>%
     mutate(cpiu = cpiu / lag(cpiu, 1)) %>%

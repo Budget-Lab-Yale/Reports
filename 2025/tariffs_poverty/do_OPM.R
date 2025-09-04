@@ -18,6 +18,7 @@ do_OPM <- function(data) {
       ssi   = replace_na(na_if(INCSSI,  999999),  0),
       vet   = replace_na(na_if(INCVET, 9999999),  0)
     ) %>%
+    # Assign census-concept family IDs
     group_by(SERIAL) %>%
     mutate(
       opm_id = case_when(
@@ -28,6 +29,7 @@ do_OPM <- function(data) {
       )
     ) %>%
     ungroup() %>%
+    # calculate unit-level sums and projected family income for 2026 (pre-tariff)
     group_by(opm_id) %>%
     mutate(
       opm_oasdi        = sum(oasdi),
@@ -36,6 +38,7 @@ do_OPM <- function(data) {
       opm_indexed      = opm_oasdi + opm_ssi + opm_vet,
       opm_other_income = OFFTOTVAL - opm_indexed,
 
+      # age forward
       opm_other_income_2026 = opm_other_income * economic_factor,
       opm_vet_2026          = opm_vet          * economic_factor,
       opm_ssi_2026          = opm_ssi          * economic_factor,
@@ -47,6 +50,7 @@ do_OPM <- function(data) {
       poverty_line = OFFCUTOFF * baseline_cpiu_factor
     ) %>%
     ungroup() %>%
+    # do poverty status calculations for each scenario
     mutate(
       baseline = opm_income_2026 < poverty_line,
       gross    = opm_income_2026 < poverty_line * (1 + cpiu_shock),
@@ -60,6 +64,7 @@ do_OPM <- function(data) {
       values_to = 'reform'
     )
 
+  # get totals
   opm_estimates <- opm_microdata %>%
     group_by(scenario) %>%
     summarise(
